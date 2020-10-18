@@ -111,7 +111,7 @@ class GaussianFit:
             plt.show()
 
 
-
+"""
 xlist1 = np.array([1,2,3,4,5,6,8,9,10])
 ylist1 = np.array([2,3,4,7,8,6,5,4,3])
 listx2 = np.linspace(-1, 15, 100)
@@ -123,3 +123,4 @@ print(data)
 plt.plot(xlist1, ylist1, '.', label = "tested values")
 plt.plot(listx2, fittedx)
 #plt.show()
+"""
