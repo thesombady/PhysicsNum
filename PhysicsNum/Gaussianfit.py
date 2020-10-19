@@ -120,7 +120,8 @@ fittedx = list(map(Fitted, listx2))
 Data = GaussianFit(xlist1, ylist1)
 data = Data.ComputeGausian(0, 9)
 print(data)
-plt.plot(xlist1, ylist1, '.', label = "tested values")
 plt.plot(listx2, fittedx)
-#plt.show()
+plt.plot(xlist1, ylist1, '.', label = "tested values")
+
+plt.show()
 """
