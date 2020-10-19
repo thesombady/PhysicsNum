@@ -94,6 +94,50 @@ class GaussianFit:
             self.PlotFit(function, xlist1)
             return function, ErrorValue
 
+    def ComputeGausian2(self, x1, x2):
+        """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
+        try:
+            try:
+                if x1 and x2 in self.xlist:
+                    index1 = self.xlist.index(x1)
+                    index2 = self.xlist.index(x2)
+            except Exception as E:
+                raise E                
+            xlist1 = np.array(self.xlist[index1:index2])
+            ylist0 = self.ylist[index1:index2]
+            ylist1 = np.array([[arg] for arg in ylist0])
+        except Exception as E:
+            raise E
+        if len(xlist1) < 4:
+            raise KeyError("[GaussianFit]: Needs more data to performe gaussian fit.")
+        else:
+            Constant_a = np.ones(len(xlist1))
+            line1 = np.ones(len(xlist1))
+            MatrixA = np.array([np.ones(len(xlist1)), xlist1, xlist1 ** 2]).T
+            MatrixAT = MatrixA.T
+            try:
+                InverseA = np.linalg.inv(MatrixAT.dot(MatrixA))
+                ylist2 = np.log(ylist1)
+                ylist3 = MatrixAT.dot(ylist2)
+                Constants = InverseA.dot(ylist3)
+            except Exception as E:
+                raise E
+            sigma = np.sqrt(- 1 / (2 * Constants[2]))
+            mu = Constants[1] * sigma ** 2
+            A = np.exp(Constants[0] + mu ** 2 / (2 * sigma ** 2))
+            print(A, mu, sigma)
+            print('A', r'$\mu$', r'$\sigma$')
+            text = np.array([['A', r'$\mu$', r'$\sigma$'], ['Error']])
+            #print(Constants[0])
+            function = lambda x: A * np.exp(-(x-mu)**2/(2*sigma**2))
+            def CalculateError(xlist, ylist):
+                RelativeError = lambda x, y: (np.log(y) - (Constants[0] + Constants[1] * x + Constants[2] * x ** 2 ))
+                ErrorValues = [RelativeError(xlist[i],ylist[i]) for i in range(len(xlist)) if len(xlist) == len(ylist)]
+                return max(ErrorValues)
+            ErrorValue = CalculateError(xlist1, ylist1) #Maxiumum deviation
+            self.PlotFit(function, xlist1)
+            return function, ErrorValue
+
     def PlotData(self):
         plt.plot(self.xlist, self.ylist, '.')
         plt.show()
