@@ -55,6 +55,9 @@ class GaussianFit:
     def __init__(self, xlist, ylist):
         self.xlist = xlist
         self.ylist = ylist
+        self.xlistcal = None
+        self.ylistcal = None
+        self.PeakValues = []
 
     def ComputeGaussian(self, index1, index2):
         """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
@@ -81,10 +84,9 @@ class GaussianFit:
             sigma = np.sqrt(- 1 / (2 * Constants[2]))
             mu = Constants[1] * sigma ** 2
             A = np.exp(Constants[0] + mu ** 2 / (2 * sigma ** 2))
-            print(A, mu, sigma)
-            print('A', r'$\mu$', r'$\sigma$')
+            #print(A, mu, sigma)
+            #print('A', r'$\mu$', r'$\sigma$')
             text = np.array([['A', r'$\mu$', r'$\sigma$'], ['Error']])
-            #print(Constants[0])
             function = lambda x: A * np.exp(-(x-mu)**2/(2*sigma**2))
             def CalculateError(xlist, ylist):
                 RelativeError = lambda x, y: (np.log(y) - (Constants[0] + Constants[1] * x + Constants[2] * x ** 2 ))
@@ -92,12 +94,21 @@ class GaussianFit:
                 return max(ErrorValues)
             ErrorValue = CalculateError(xlist1, ylist1) #Maxiumum deviation
             self.PlotFit(function, xlist1)
-            return function, ErrorValue
+            self.PeakValues.append(mu)
+            return function, mu, ErrorValue
 
 
-    def PlotData(self):
-        plt.plot(self.xlist, self.ylist, '.')
-        plt.show()
+    def PlotData(self, title, xlabel, ylabel, legend):
+        try:
+            plt.plot(self.xlistcal, self.ylist, '.')
+            plt.show()
+        except:
+            try:
+                plt.plot(self.xlist, self.ylist, '.')
+                plt.show()
+            except Exception as E:
+                raise E
+
 
     def PlotFit(self, function, xlist, res = 1000):
         if not callable(function):
@@ -110,6 +121,35 @@ class GaussianFit:
             plt.legend()
             plt.title("Gausian fit")
             plt.show()
+
+    def Calibration(self, func, *args):
+        """Just for Alpha lab."""
+        try:
+            self.k = args[0]
+        except:
+            pass
+        try:
+            xlist = np.array(self.xlist.copy())
+            ylist = np.array(self.ylist.copy())
+        except Exception as E:
+            raise E
+
+        if not callable(func):
+            raise KeyError("[System]: GaussianFit can't prefome calibration")
+        else:
+            try:
+                self.xlistcal = np.array(list(map(func, xlist)))
+            except Exception as E:
+                raise E
+
+    def CalibratedPeaks(self):
+        CalibratedPeaks1 = self.PeakValues.copy()
+        CalibratedPeaks2 = np.array(CalibratedPeaks1)
+        try:
+            return (CalibratedPeaks2 * self.k)
+        except Exception as E:
+            raise E
+
 
 
 """
