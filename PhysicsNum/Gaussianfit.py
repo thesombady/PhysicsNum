@@ -61,23 +61,27 @@ class GaussianFit:
         self.Counts = []
         self.Sigma = []
         self.Area = []
+        self.Mu = []
 
     def ComputeGaussian(self, index1, index2):
         """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
-        if self.xlistcal.any() == None:
-            try:
-                xlist1 = np.array(self.xlist[index1:index2])
-                ylist0 = self.ylist[index1:index2]
-                ylist1 = np.array([[arg + 1] for arg in ylist0])
-            except Exception as E:
-                raise E
-        else:
-            try:
-                xlist1 = np.array(self.xlistcal[index1:index2])
-                ylist0 = self.ylist[index1:index2]
-                ylist1 = np.array([[arg + 1] for arg in ylist0])
-            except Exception as E:
-                raise E
+        try:
+            if self.xlistcal.any() == None:
+                try:
+                    xlist1 = np.array(self.xlist[index1:index2])
+                    ylist0 = self.ylist[index1:index2]
+                    ylist1 = np.array([[arg + 1] for arg in ylist0])
+                except Exception as E:
+                    raise E
+            else:
+                try:
+                    xlist1 = np.array(self.xlistcal[index1:index2])
+                    ylist0 = self.ylist[index1:index2]
+                    ylist1 = np.array([[arg + 1] for arg in ylist0])
+                except Exception as E:
+                    raise E
+        except Exception as E:
+            raise E
         if len(xlist1) < 4:
             raise KeyError("[GaussianFit]: Needs more data to performe gaussian fit.")
         else:
@@ -117,14 +121,15 @@ class GaussianFit:
                 return sum(riearea)
             try:
                 Peakarea = RiemanSum(function, self.xlistcal[index1], self.xlistcal[index2])
-                print(type(Peakarea))
             except:
-                Peakarea = RiemanSum(function, self.xlist[index1], self.xlist[index2])
-                print(type(Peakarea))
+                try:
+                    Peakarea = RiemanSum(function, self.xlist[index1], self.xlist[index2])
+                except Exception as E:
+                    raise E
             try:
                 self.Area.append(Peakarea)
-            except:
-                pass
+            except Exception as E:
+                raise E
             return function, sigma, ErrorValue
 
     def Calibratedp(self):
