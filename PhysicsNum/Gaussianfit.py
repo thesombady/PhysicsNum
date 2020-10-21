@@ -58,6 +58,9 @@ class GaussianFit:
         self.xlistcal = None
         self.ylistcal = None
         self.PeakValues = []
+        self.Counts = []
+        self.Sigma = []
+        self.Area = []
 
     def ComputeGaussian(self, index1, index2):
         """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
@@ -95,16 +98,42 @@ class GaussianFit:
             ErrorValue = CalculateError(xlist1, ylist1) #Maxiumum deviation
             self.PlotFit(function, xlist1)
             self.PeakValues.append(mu)
-            return function, mu, ErrorValue
+            self.Counts.append(A)
+            self.Sigma.append(sigma)
+            def RiemanSum(func, a,b):
+                h = 0.01
+                riesum = []
+                while a-10 < b + 10:
+                    riesum.append(func(a)*h)
+                    a +=h
+                return sum(riesum)
+            Peakarea = RiemanSum(function, index1, index2)
+            self.Area.append(Peakarea)
+            return function, sigma, ErrorValue
 
+    def Calibratedp(self):
+        peaklist = self.PeakValues.copy()
+        try:
+            peaklist = np.array(peaklist) * self.k
+            return peaklist
+        except Exception as E:
+            raise E
 
-    def PlotData(self, title, xlabel, ylabel, legend):
+    def PlotData(self, title, xlabel, ylabel):
         try:
             plt.plot(self.xlistcal, self.ylist, '.')
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.title(title)
+            plt.legend()
             plt.show()
         except:
             try:
                 plt.plot(self.xlist, self.ylist, '.')
+                plt.xlabel(xlabel)
+                plt.ylabel(ylabel)
+                plt.legend()
+                plt.title(title)
                 plt.show()
             except Exception as E:
                 raise E
