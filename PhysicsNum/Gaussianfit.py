@@ -140,12 +140,17 @@ class GaussianFit:
         except Exception as E:
             raise E
 
-    def PlotData(self, title, xlabel, ylabel):
+    def PlotData(self, title, xlabel, ylabel, xlim = None):
         try:
-            plt.plot(self.xlistcal, self.ylist, '.')
+            plt.plot(self.xlistcal, self.ylist, '-')
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             plt.title(title)
+            if xlim != None:
+                try:
+                    plt.xlim(0, xlim)
+                except Exception as E:
+                    raise E
             plt.legend()
             plt.show()
         except:
