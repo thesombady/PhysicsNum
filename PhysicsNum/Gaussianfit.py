@@ -64,12 +64,20 @@ class GaussianFit:
 
     def ComputeGaussian(self, index1, index2):
         """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
-        try:
-            xlist1 = np.array(self.xlist[index1:index2])
-            ylist0 = self.ylist[index1:index2]
-            ylist1 = np.array([[arg + 1] for arg in ylist0])
-        except Exception as E:
-            raise E
+        if self.xlistcal.any() == None:
+            try:
+                xlist1 = np.array(self.xlist[index1:index2])
+                ylist0 = self.ylist[index1:index2]
+                ylist1 = np.array([[arg + 1] for arg in ylist0])
+            except Exception as E:
+                raise E
+        else:
+            try:
+                xlist1 = np.array(self.xlistcal[index1:index2])
+                ylist0 = self.ylist[index1:index2]
+                ylist1 = np.array([[arg + 1] for arg in ylist0])
+            except Exception as E:
+                raise E
         if len(xlist1) < 4:
             raise KeyError("[GaussianFit]: Needs more data to performe gaussian fit.")
         else:
@@ -102,13 +110,21 @@ class GaussianFit:
             self.Sigma.append(sigma)
             def RiemanSum(func, a,b):
                 h = 0.01
-                riesum = []
+                riearea = []
                 while a-10 < b + 10:
-                    riesum.append(func(a)*h)
+                    riearea.append(func(a)*h)
                     a +=h
-                return sum(riesum)
-            Peakarea = RiemanSum(function, index1, index2)
-            self.Area.append(Peakarea)
+                return sum(riearea)
+            try:
+                Peakarea = RiemanSum(function, self.xlistcal[index1], self.xlistcal[index2])
+                print(type(Peakarea))
+            except:
+                Peakarea = RiemanSum(function, self.xlist[index1], self.xlist[index2])
+                print(type(Peakarea))
+            try:
+                self.Area.append(Peakarea)
+            except:
+                pass
             return function, sigma, ErrorValue
 
     def Calibratedp(self):
@@ -143,13 +159,22 @@ class GaussianFit:
         if not callable(function):
             raise KeyError("[GaussianFit]: Cannot plot the gaussian fit")
         else:
-            plt.plot(self.xlist, self.ylist, '.', label = 'Data')
-            xranges = np.linspace(xlist[0], xlist[-1], res)
-            yvalues = list(map(function, xranges))
-            plt.plot(xranges, yvalues, label = 'Regression')
-            plt.legend()
-            plt.title("Gausian fit")
-            plt.show()
+            try:
+                plt.plot(self.xlistcal, self.ylist, '.', label = 'Data')
+                xranges = np.linspace(xlist[0], xlist[-1], res)
+                yvalues = list(map(function, xranges))
+                plt.plot(xranges, yvalues, label = 'Regression')
+                plt.legend()
+                plt.title("Gausian fit")
+                plt.show()
+            except:
+                plt.plot(self.xlist, self.ylist, '.', label = 'Data')
+                xranges = np.linspace(xlist[0], xlist[-1], res)
+                yvalues = list(map(function, xranges))
+                plt.plot(xranges, yvalues, label = 'Regression')
+                plt.legend()
+                plt.title("Gausian fit")
+                plt.show()
 
     def Calibration(self, func, *args):
         """Just for Alpha lab."""
@@ -162,7 +187,7 @@ class GaussianFit:
             ylist = np.array(self.ylist.copy())
         except Exception as E:
             raise E
-
+        """
         if not callable(func):
             raise KeyError("[System]: GaussianFit can't prefome calibration")
         else:
@@ -170,6 +195,11 @@ class GaussianFit:
                 self.xlistcal = np.array(list(map(func, xlist)))
             except Exception as E:
                 raise E
+        """
+        try:
+            self.xlistcal = xlist * self.k
+        except Exception as E:
+            raise E
 
     def CalibratedPeaks(self):
         CalibratedPeaks1 = self.PeakValues.copy()
@@ -178,7 +208,6 @@ class GaussianFit:
             return (CalibratedPeaks2 * self.k)
         except Exception as E:
             raise E
-
 
 
 """
