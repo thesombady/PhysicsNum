@@ -5,7 +5,7 @@ with open("readme.md", 'r') as readme_file:
 
 setup(
     name = "PhysicsNum",
-    version = "0.0.2",
+    version = "0.0.3",
     author = "Andreas Evensen",
     author_email = "Andreas.evensen11@gmail.com",
     description = "Numerical methods provided to solve different methods in university studies",

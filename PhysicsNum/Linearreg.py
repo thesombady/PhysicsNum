@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def Linearreg(xlist, ylist):
     """ Takes two inputs, in list, tuple or arrays and computes a linear regression with method of least squares.
-    Returns k * (x) + m where """ #Add the return of std-error and r^2 value
+    Returns k, m, such that y = kx + m & maximum deviation. """ #Add the return of std-error and r^2 value
     if not isinstance((xlist, ylist), (np.generic, np.ndarray)):
         if isinstance((xlist, ylist), (list, tuple)):
             xlist, ylist = np.array(xlist), np.array(ylist)
@@ -21,9 +21,12 @@ def Linearreg(xlist, ylist):
             ATY = A.T.dot(ylist)
             ATAInv = np.linalg.inv(ATA)
             KM = ATAInv.dot(ATY)
-            return KM
+            #return KM
         except Exception as E:
             raise E
+        #Maximum Deviation, not standard deviation
+        Error = [(KM[0] * xlist[i] + KM[1]) - ylist[i]) for i in range(len(xlist)) if len(xlist) == len(ylist)]
+        return KM, max(Error)
 
 """
 xlist1 = np.array([1,2,3,4,5,6,7,8,9,10])
