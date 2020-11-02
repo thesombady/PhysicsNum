@@ -26,7 +26,7 @@ def Linearreg(xlist, ylist):
         except Exception as E:
             raise E
         #Maximum Deviation, not standard deviation
-    
+
 def ForceLinearreg(xlist,ylist):
     """Linear regression that forces through origion."""
     if not isinstance((xlist, ylist), (np.generic, np.ndarray)):
@@ -50,7 +50,7 @@ def ForceLinearreg(xlist,ylist):
             raise E
 
 
-
+"""
 xlist1 = np.array([1,2,3,4,5,6,7,8,9,10])
 ylist1 = np.array([4,6,9,10,12,14,16,18,20,21])
 Model = ForceLinearreg(xlist1, ylist1)
@@ -59,6 +59,7 @@ plt.plot(xlist1, ylist1, '.', label = "DATA")
 plt.plot(xlist1, xlist1 * Model[0], '-', label = "Regression")
 plt.legend()
 plt.show()
+"""
 """
 Regression = Linearregression(xlist1, ylist1)
 
