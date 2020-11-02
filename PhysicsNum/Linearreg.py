@@ -21,16 +21,45 @@ def Linearreg(xlist, ylist):
             ATY = A.T.dot(ylist)
             ATAInv = np.linalg.inv(ATA)
             KM = ATAInv.dot(ATY)
-            #return KM
+            Error = [((KM[0] * xlist[i] + KM[1]) - ylist[i]) for i in range(len(xlist)) if len(xlist) == len(ylist)]
+            return KM, max(Error)
         except Exception as E:
             raise E
         #Maximum Deviation, not standard deviation
-        Error = [(KM[0] * xlist[i] + KM[1]) - ylist[i]) for i in range(len(xlist)) if len(xlist) == len(ylist)]
-        return KM, max(Error)
+    
+def ForceLinearreg(xlist,ylist):
+    """Linear regression that forces through origion."""
+    if not isinstance((xlist, ylist), (np.generic, np.ndarray)):
+        if isinstance((xlist, ylist), (list, tuple)):
+            xlist, ylist = np.array(xlist), np.array(ylist)
+        else:
+            raise TypeError("[ForceLinearreg] Can't make linear fit with given input")
+    if len(xlist) != len(ylist) or len(xlist) < 2 or len(ylist) < 2:
+        raise KeyError("[ForceLinearreg] Can't make linear fit with given input")
+    else:
+        try:
+            line = lambda k,x: k * x
+            A = np.array([xlist]).T
+            ATA = A.T.dot(A)
+            ATY = A.T.dot(ylist)
+            ATAInv = np.linalg.inv(ATA)
+            KM = ATAInv.dot(ATY)
+            Error = [(KM * xlist[i] - ylist[i]) for i in range(len(xlist))]
+            return KM, max(Error)
+        except Exception as E:
+            raise E
 
-"""
+
+
 xlist1 = np.array([1,2,3,4,5,6,7,8,9,10])
 ylist1 = np.array([4,6,9,10,12,14,16,18,20,21])
+Model = ForceLinearreg(xlist1, ylist1)
+print(Model)
+plt.plot(xlist1, ylist1, '.', label = "DATA")
+plt.plot(xlist1, xlist1 * Model[0], '-', label = "Regression")
+plt.legend()
+plt.show()
+"""
 Regression = Linearregression(xlist1, ylist1)
 
 plt.plot(xlist1,ylist1, '.')
