@@ -13,6 +13,8 @@ plt.plot(xlist1, xlist1 * Model[0], '-', label = "Regression")
 plt.legend()
 plt.show()
 ```
+This is a small indication of PhysicsNum.ForceLinearreg, where PhysicsNum.Linearreg is written in the same way.
+
 
 # Contribute
  Feel free to contribute to this code, it is found on Github under the authors name.

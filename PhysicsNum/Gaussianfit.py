@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 import functools
 
 class GaussianFit:
+    """A Gaussian class used to compute gaussian distribution for mulitple samples."""
     def __init__(self, xlist, ylist):
+        """Standard init function"""
         self.xlist = xlist
         self.ylist = ylist
         self.xlistcal = None
@@ -56,6 +58,7 @@ class GaussianFit:
             #print('A', r'$\mu$', r'$\sigma$')
             text = np.array([['A', r'$\mu$', r'$\sigma$'], ['Error']])
             function = lambda x: A * np.exp(-(x-mu)**2/(2*sigma**2))
+
             def CalculateError(xlist, ylist):
                 RelativeError = lambda x, y: (np.log(y) - (Constants[0] + Constants[1] * x + Constants[2] * x ** 2 ))
                 ErrorValues = [RelativeError(xlist[i],ylist[i]) for i in range(len(xlist)) if len(xlist) == len(ylist)]
@@ -85,7 +88,8 @@ class GaussianFit:
                 raise E
             return function, sigma, ErrorValue
 
-    def Calibratedp(self):
+    def Calibrated(self):
+        """Used to return calibrated values, this is done when the calibration is done"""
         peaklist = self.PeakValues.copy()
         try:
             peaklist = np.array(peaklist) * self.k
@@ -172,7 +176,48 @@ class GaussianFit:
         except Exception as E:
             raise E
 
-
+def Gaussian(xlist, ylist, indices):
+    """Simple Gaussian method that relies on method of least squares."""
+    index1 = indices[0]
+    index2 = indices[1]
+    if not isinstance((index1, index2), int):
+        raise ValueError("[Gaussianfit.py]: Gaussian requires indices input to be a list or tuple of integers")
+    if not isinstance((xlist, ylist), (np.generic, np.ndarray)):
+        if isinstance((xlist, ylist), (list, tuple)):
+            xlist, ylist = np.array(xlist), np.array(ylist)
+        else:
+            raise ValueError(f"[Gaussianfit.py]: Gaussian requires input xlist and ylist to be of type, np.generic, np.ndarray, tuple or list")
+    try:
+        xlist1 = np.array(self.xlist[index1:index2])
+        ylist0 = self.ylist[index1:index2]
+        if ylist0.any() == 0:
+            ylist1 = np.array([[arg + 1] for arg in ylist0])
+        else:
+            ylist1 = np.array([[arg] for arg in ylist0]) # Transpose Error
+    except Exception as e:
+        raise E
+    if len(xlist1) < 4:
+        raise KeyError("[GaussianFit]: Needs more data to performe gaussian fit.")
+    else:
+        try:
+            Constant_a = np.ones(len(xlist1))
+            line1 = np.ones(len(xlist1))
+            MatrixA = np.array([np.ones(len(xlist1)), xlist1, xlist1 ** 2]).T
+            MatrixAT = MatrixA.T
+            try:
+                InverseA = np.linalg.inv(MatrixAT.dot(MatrixA))
+                ylist2 = np.log(ylist1)
+                ylist3 = MatrixAT.dot(ylist2)
+                Constants = InverseA.dot(ylist3)
+            except Exception as E:
+                raise E
+            sigma = np.sqrt(- 1 / (2 * Constants[2]))
+            mu = Constants[1] * sigma ** 2
+            A = np.exp(Constants[0] + mu ** 2 / (2 * sigma ** 2))
+            function = lambda x: A * np.exp(-(x-mu)**2/(2*sigma**2))
+        except Exception as e:
+            raise E
+        return function, sigma
 """
 xlist1 = np.array([1,2,3,4,5,6,8,9,10])
 ylist1 = np.array([2,3,4,7,8,6,5,4,3])

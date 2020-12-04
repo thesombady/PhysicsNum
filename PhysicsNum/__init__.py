@@ -1,3 +1,4 @@
-from .Gaussianfit import GaussianFit
+from .Gaussianfit import GaussianFit, Gaussian
 from .Linearreg import Linearreg, ForceLinearreg
-from .ImportData import ImportCSV
+from .ImportData import ImportCSV, ImportTXT
+from . Riemann import RiemanSum
