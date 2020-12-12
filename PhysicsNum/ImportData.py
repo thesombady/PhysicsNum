@@ -5,7 +5,7 @@ except:
     print("[ImportData.py] Package pandas is not installed, and ImportCSV will therefore not work.")
 def ImportCSV(Filepath):
     """Returns all data for an iterated Panda Dataframe, only works with file extensions such as
-    .txt and .csv. Works upon the package pandas""""
+    .txt and .csv. Works upon the package pandas"""
     try:
         PandaFrame = pd.read_csv(Filepath)
     except Exception as E:
