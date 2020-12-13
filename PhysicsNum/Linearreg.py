@@ -43,9 +43,9 @@ def ForceLinearreg(xlist,ylist):
             ATA = A.T.dot(A)
             ATY = A.T.dot(ylist)
             ATAInv = np.linalg.inv(ATA)
-            KM = ATAInv.dot(ATY)
-            Error = [(KM * xlist[i] - ylist[i]) for i in range(len(xlist))]
-            return KM, max(Error)
+            K = ATAInv.dot(ATY)
+            Error = [(K * xlist[i] - ylist[i]) for i in range(len(xlist))]
+            return K[0], max(Error)[0]
         except Exception as E:
             raise E
 
