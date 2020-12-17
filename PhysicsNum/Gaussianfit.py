@@ -97,9 +97,9 @@ class GaussianFit:
         except Exception as E:
             raise E
 
-    def PlotData(self, title, xlabel, ylabel, xlim = None):
+    def PlotData(self, title, xlabel, ylabel, xlim = None, Legend = "Recorded Data"):
         try:
-            plt.plot(self.xlistcal, self.ylist, '-')
+            plt.plot(self.xlistcal, self.ylist, '.', markersize = 1.5, label = Legend)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             plt.title(title)
@@ -109,13 +109,15 @@ class GaussianFit:
                 except Exception as E:
                     raise E
             plt.legend()
+            plt.grid()
             plt.show()
         except:
             try:
-                plt.plot(self.xlist, self.ylist, '.')
+                plt.plot(self.xlist, self.ylist, '.', markersize = 1.5, label = Legend)
                 plt.xlabel(xlabel)
                 plt.ylabel(ylabel)
                 plt.legend()
+                plt.grid()
                 plt.title(title)
                 plt.show()
             except Exception as E:
