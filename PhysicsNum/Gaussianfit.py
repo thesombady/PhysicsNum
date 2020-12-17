@@ -21,7 +21,7 @@ class GaussianFit:
     def ComputeGaussian(self, index1, index2):
         """Returns a function of which one can plot the gausian fit with; Maximum error is also returned from when performing the fit"""
         try:
-            if self.xlistcal.any() == None:
+            if self.xlistcal == None:
                 try:
                     xlist1 = np.array(self.xlist[index1:index2])
                     ylist0 = self.ylist[index1:index2]
